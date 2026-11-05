@@ -3,6 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script>
+/* Strip GTM Conversion Linker / Google ads query params so a shared 360 URL
+   stays short. Drops _gl, gclid, dclid, gbraid, wbraid, gclsrc, and any _gcl_*
+   key. Keeps lang and every other param, plus the hash. replaceState only. */
+(function () {
+  var search = location.search;
+  if (!search || search.length < 2) return;
+  var drop = { _gl: 1, gclid: 1, dclid: 1, gbraid: 1, wbraid: 1, gclsrc: 1 };
+  var parts = search.slice(1).split("&");
+  var kept = [];
+  var changed = false;
+  for (var i = 0; i < parts.length; i++) {
+    var part = parts[i];
+    if (!part) continue;
+    var eq = part.indexOf("=");
+    var rawKey = eq === -1 ? part : part.slice(0, eq);
+    var key = rawKey;
+    try { key = decodeURIComponent(rawKey.replace(/\+/g, " ")); } catch (e) {}
+    if (drop[key] || key.indexOf("_gcl_") === 0) changed = true;
+    else kept.push(part);
+  }
+  if (!changed) return;
+  try {
+    history.replaceState(history.state, "", location.pathname + (kept.length ? "?" + kept.join("&") : "") + location.hash);
+  } catch (e) {}
+})();
+</script>
 <title>Daira 360° | Biograpi Living</title>
 <link rel="stylesheet" href="pannellum.css">
 <style>
